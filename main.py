@@ -9,6 +9,7 @@ if 'session_state' not in st.session_state:
 
 def main():
     global data
+    st.set_page_config(layout="wide")
     # Create a sidebar menu
     menu = ["Home", "資源設定", "廣告設定", "⽂本設定", "路線設定", "本地化設定", "段落設定", "導覽點設定", "Generate JSON"]
     choice = st.sidebar.selectbox("Menu", menu)
@@ -31,7 +32,20 @@ def main():
     elif choice == "導覽點設定":
         show_guides()
     elif choice == "Generate JSON":
-        generate_json()
+
+        data = {
+            "資源設定 (resources)": st.session_state['session_state']["resources"],
+            "廣告設定 (ads)": st.session_state['session_state']["ads"],
+            "⽂本設定 (talks)": st.session_state['session_state']["talks"],
+            "路線設定 (routes)": st.session_state['session_state']["routes"],
+            "本地化設定 (localizations)": st.session_state['session_state']["localizations"],
+            "段落設定 (parts)": st.session_state['session_state']["parts"],
+            "導覽點設定 (guides)": st.session_state['session_state']["guides"]
+        }
+        generate_json(data)
+
+
+
 
     # Upload the json file
     uploaded_file = st.sidebar.file_uploader("Upload local JSON", type=['json'])
@@ -43,15 +57,17 @@ def main():
         # To convert the string data to JSON:
         json_data = json.loads(string_data)
 
-
-        st.session_state['session_state']["resources"]=json_data["資源設定 (resources)"]
-        st.session_state['session_state']["ads"]=json_data["廣告設定 (ads)"]
-        st.session_state['session_state']["talks"]=json_data["⽂本設定 (talks)"]
-        st.session_state['session_state']["routes"]=json_data["路線設定 (routes)"]
-        st.session_state['session_state']["localizations"]=json_data["本地化設定 (localizations)"]
-        st.session_state['session_state']["parts"]=json_data["段落設定 (parts)"]
-        st.session_state['session_state']["guides"]=json_data["導覽點設定 (guides)"]
-        data = st.session_state['session_state']
+        try:
+            st.session_state['session_state']["resources"]=json_data["資源設定 (resources)"]
+            st.session_state['session_state']["ads"]=json_data["廣告設定 (ads)"]
+            st.session_state['session_state']["talks"]=json_data["⽂本設定 (talks)"]
+            st.session_state['session_state']["routes"]=json_data["路線設定 (routes)"]
+            st.session_state['session_state']["localizations"]=json_data["本地化設定 (localizations)"]
+            st.session_state['session_state']["parts"]=json_data["段落設定 (parts)"]
+            st.session_state['session_state']["guides"]=json_data["導覽點設定 (guides)"]
+            data = st.session_state['session_state']
+        except:
+            show_Json_graph(json_data)
 
         st.sidebar.json(json_data)
 
@@ -348,16 +364,7 @@ def show_guides():
 
 
 # st.markdown("<hr>", unsafe_allow_html=True)
-def generate_json():
-    data = {
-        "資源設定 (resources)": st.session_state['session_state']["resources"],
-        "廣告設定 (ads)": st.session_state['session_state']["ads"],
-        "⽂本設定 (talks)": st.session_state['session_state']["talks"],
-        "路線設定 (routes)": st.session_state['session_state']["routes"],
-        "本地化設定 (localizations)": st.session_state['session_state']["localizations"],
-        "段落設定 (parts)": st.session_state['session_state']["parts"],
-        "導覽點設定 (guides)": st.session_state['session_state']["guides"]
-    }
+def generate_json(data):
     st.json(data)
     json_data = json.dumps(data, ensure_ascii=False)
     show_Json_graph(json_data)
