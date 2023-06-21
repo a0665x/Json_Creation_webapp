@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-from json_graph import show_Json_graph
+from json_graph import show_Json_graph , show_Json_layers_graph
 
 
 # Create a session state object
@@ -43,7 +43,10 @@ def main():
             "導覽點設定 (guides)": st.session_state['session_state']["guides"]
         }
         try:
-            generate_json(data)
+            # generate_json(data)
+            show_Json_graph(data)
+            st.header('Graph by Json_layers structure')
+            show_Json_layers_graph(data)
         except:
             st.write('Please fill in the content in the Menu, otherwise the graph cannot be displayed')
             pass
@@ -52,6 +55,7 @@ def main():
         with open('./demo.json', 'r', encoding='utf-8') as user_file:
             default_data = json.load(user_file)
         generate_json(default_data)
+
 
 
 
@@ -76,7 +80,10 @@ def main():
             st.session_state['session_state']["guides"]=json_data["導覽點設定 (guides)"]
             data = st.session_state['session_state']
         except:
+            st.header('Graph by keys/values context')
             show_Json_graph(json_data)
+            st.header('Graph by Json_layers structure')
+            show_Json_layers_graph(json_data)
 
         st.sidebar.json(json_data)
 
@@ -376,7 +383,10 @@ def show_guides():
 def generate_json(data):
     st.json(data)
     json_data = json.dumps(data, ensure_ascii=False)
+    st.header('Graph by keys/values context')
     show_Json_graph(json_data)
+    st.header('Graph by Json_layers structure')
+    show_Json_layers_graph(json_data)
     st.download_button("Download JSON file", data=json.dumps(data, ensure_ascii=False).encode("utf-8"), file_name="data.json", mime="application/json")
 
 if __name__ == "__main__":
