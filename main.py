@@ -42,7 +42,16 @@ def main():
             "段落設定 (parts)": st.session_state['session_state']["parts"],
             "導覽點設定 (guides)": st.session_state['session_state']["guides"]
         }
-        generate_json(data)
+        try:
+            generate_json(data)
+        except:
+            st.write('Please fill in the content in the Menu, otherwise the graph cannot be displayed')
+            pass
+    if st.sidebar.checkbox('Default Json'):
+        st.header('show default json form blob')
+        with open('./demo.json', 'r', encoding='utf-8') as user_file:
+            default_data = json.load(user_file)
+        generate_json(default_data)
 
 
 
